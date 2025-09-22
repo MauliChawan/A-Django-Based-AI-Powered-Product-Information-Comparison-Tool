@@ -1,3 +1,7 @@
 "Hello Git" 
 "Let's Start"
+<<<<<<< HEAD
 "Tested By Amit"
+=======
+"by sankalp"
+>>>>>>> e0ed9a07cba2fb475ce67e69f03c633f6d207f59
