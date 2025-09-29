@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Product Comparison Tool</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>AI Comparing Tool</h2>
+        <button class="toggle-sidebar" id="toggleSidebar"><i class="fas fa-bars"></i></button>
+      </div>
+      <div class="sidebar-nav">
+        <button class="nav-button active"><span class="icon">✨</span> New Chat</button>
+        <div class="history-list">
+          <h4>History</h4>
+          <a href="#" class="history-item">Comparison: Laptop vs Tablet</a>
+          <a href="#" class="history-item">Review: Gaming Monitor</a>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <button class="footer-button"><span class="icon">⚙️</span> Settings</button>
+        <button class="footer-button"><span class="icon">👤</span> Login</button>
+        <button class="footer-button"><span class="icon">👤</span> Sign up</button>
+        <button class="footer-button" id="themeToggle"><span class="icon">🌙</span> Dark/Light</button>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="chat-window" id="chatWindow">
+        <div class="message user-message">
+          <p>What are the differences between a MacBook Air and a Dell XPS 13?</p>
+        </div>
+        <div class="message ai-message">
+          <p>Comparing MacBook Air M2 vs Dell XPS 13...</p>
+
+          <!-- Comparison cards -->
+          <div class="comparison-cards">
+            <div class="card">
+              <img src="https://via.placeholder.com/120" alt="MacBook Air">
+              <h4>MacBook Air M2</h4>
+              <ul>
+                <li>13.6” Retina Display</li>
+                <li>Apple M2 Chip</li>
+                <li>18 hrs battery</li>
+              </ul>
+            </div>
+            <div class="card">
+              <img src="https://via.placeholder.com/120" alt="Dell XPS 13">
+              <h4>Dell XPS 13</h4>
+              <ul>
+                <li>13.4” FHD+ Display</li>
+                <li>Intel i7 12th Gen</li>
+                <li>14 hrs battery</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Typing indicator -->
+        <div class="message ai-message typing-indicator" id="typingIndicator">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <!-- Input Section -->
+      <div class="input-container">
+        <div class="insert-options-wrapper">
+          <button class="insert-button" id="insert-button"><i class="fas fa-plus"></i></button>
+          <div class="insert-options-menu hidden" id="insert-options-menu">
+            <button class="option-button" id="photo-button"><i class="fas fa-image"></i> Insert Photo</button>
+            <input type="file" id="photo-input" accept="image/*" style="display: none;">
+            <button class="option-button" id="link-button"><i class="fas fa-link"></i> Insert Link</button>
+          </div>
+        </div>
+
+        <textarea id="prompt-input" placeholder="Ask about products to compare..."></textarea>
+        <button id="send-button"><span class="icon">➡️</span></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
