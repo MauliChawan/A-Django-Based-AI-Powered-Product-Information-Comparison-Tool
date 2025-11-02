@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Comparsy</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+
+    <style>
+        ::-webkit-scrollbar{
+            width: 6px;
+        }
+        ::-webkit-scrollbar-thumb{
+            background: #3b82f6;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+<!-- SIDEBAR -->
+<div class="fixed left-0 top-0 h-screen w-64 border-r border-gray-300 px-4 py-6 bg-white">
+    <h1 class="font-bold text-xl mb-6 text-blue-600">Comparsy</h1>
+
+    <div class="space-y-2 overflow-y-auto h-[80vh]">
+        <div class="cursor-pointer hover:bg-gray-200 p-2 rounded">New Chat</div>
+        <div class="cursor-pointer hover:bg-gray-200 p-2 rounded">History #1</div>
+        <div class="cursor-pointer hover:bg-gray-200 p-2 rounded">History #2</div>
+    </div>
+</div>
+
+<!-- NAVBAR -->
+<div class="fixed left-64 top-0 right-0 h-14 border-b border-gray-300 flex items-center justify-between px-6 bg-white">
+    <div class="font-medium text-lg">Product comparison assistant</div>
+
+    <div class="flex items-center gap-5">
+        <button class="hover:text-blue-600">Login</button>
+        <button class="hover:text-blue-600">Signup</button>
+        <i class="fa-regular fa-user text-xl cursor-pointer hover:text-blue-600"></i>
+        <i class="fa-solid fa-share-nodes text-xl cursor-pointer hover:text-blue-600"></i>
+    </div>
+</div>
+
+<!-- MAIN BODY -->
+<div class="ml-64 mt-20">
+
+    <!-- 3 PLUS BUTTONS -->
+    <div class="flex justify-center mt-6 gap-12">
+        <div class="w-40 h-40 border border-blue-400 rounded-xl flex items-center justify-center hover:bg-blue-50 cursor-pointer transition hover:scale-105">
+            <span class="text-7xl font-light text-blue-600">+</span>
+        </div>
+        <div class="w-40 h-40 border border-blue-400 rounded-xl flex items-center justify-center hover:bg-blue-50 cursor-pointer transition hover:scale-105">
+            <span class="text-7xl font-light text-blue-600">+</span>
+        </div>
+        <div class="w-40 h-40 border border-blue-400 rounded-xl flex items-center justify-center hover:bg-blue-50 cursor-pointer transition hover:scale-105">
+            <span class="text-7xl font-light text-blue-600">+</span>
+        </div>
+    </div>
+
+    <!-- CHAT MESSAGES AREA -->
+    <div id="chatbox" class="mt-10 px-10 h-[72vh] overflow-y-auto">
+        <div class="text-center text-gray-400 mt-20">Start typing to search product…</div>
+    </div>
+
+    <!-- CHAT INPUT BAR -->
+    <div class="fixed bottom-4 left-64 right-4 flex items-center gap-3 bg-white border border-gray-300 rounded-full px-4 py-2 shadow">
+        <i class="fa-solid fa-paperclip cursor-pointer text-xl text-gray-500"></i>
+        <input type="text" placeholder="Send a message or paste a link..."
+               class="flex-1 outline-none text-gray-900 bg-transparent text-base">
+        <i class="fa-solid fa-microphone cursor-pointer text-xl text-gray-500"></i>
+        <button>
+            <i class="fa-solid fa-paper-plane cursor-pointer text-xl text-blue-600"></i>
+        </button>
+    </div>
+
+</div>
+
+</body>
+</html>

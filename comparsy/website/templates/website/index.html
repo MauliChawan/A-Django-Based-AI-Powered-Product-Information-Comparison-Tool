@@ -1,2 +1,18 @@
-<h1>Comparsy Frontend Setup Successful</h1>
-<p>This is the homepage.</p>
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container text-center mt-5">
+
+  <h2 class="mb-4">Select products to compare</h2>
+
+  <div class="d-flex justify-content-center gap-4">
+    <div class="plus-block">+</div>
+    <div class="plus-block">+</div>
+    <div class="plus-block">+</div>
+  </div>
+
+  <p class="mt-4 text-muted">Tap on the plus to search product</p>
+
+</div>
+
+{% endblock %}
