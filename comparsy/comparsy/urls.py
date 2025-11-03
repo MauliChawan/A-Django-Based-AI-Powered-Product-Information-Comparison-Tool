@@ -16,12 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from website.views import index
+from website.views import index, loginPage, signupPage  # <--- THIS IS CORRECT
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', index, name='index'),
+    path('login/', loginPage, name='login'),
+    path('signup/', signupPage, name='signup'),
 ]
+
 
 
 

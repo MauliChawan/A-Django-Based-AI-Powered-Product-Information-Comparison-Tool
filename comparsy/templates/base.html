@@ -12,7 +12,7 @@
             width: 6px;
         }
         ::-webkit-scrollbar-thumb{
-            background: #3b82f6;
+            background: #87CEFA;
             border-radius: 4px;
         }
     </style>
@@ -23,59 +23,100 @@
 <!-- SIDEBAR -->
 <div class="fixed left-0 top-0 h-screen w-64 border-r border-gray-300 px-4 py-6 bg-white">
     <h1 class="font-bold text-xl mb-6 text-blue-600">Comparsy</h1>
-
     <div class="space-y-2 overflow-y-auto h-[80vh]">
-        <div class="cursor-pointer hover:bg-gray-200 p-2 rounded">New Chat</div>
-        <div class="cursor-pointer hover:bg-gray-200 p-2 rounded">History #1</div>
-        <div class="cursor-pointer hover:bg-gray-200 p-2 rounded">History #2</div>
+        <div class="cursor-pointer hover:bg-gray-200 p-2 rounded bg-blue-50">New Chat</div>
+        <div class="cursor-pointer hover:bg-gray-200 p-2 rounded bg-blue-50">History #1</div>
+        <div class="cursor-pointer hover:bg-gray-200 p-2 rounded bg-blue-50">History #2</div>
     </div>
 </div>
 
 <!-- NAVBAR -->
 <div class="fixed left-64 top-0 right-0 h-14 border-b border-gray-300 flex items-center justify-between px-6 bg-white">
-    <div class="font-medium text-lg">Product comparison assistant</div>
+    <div class="font-medium text-lg">Comparsy AI Product Comparison</div>
 
     <div class="flex items-center gap-5">
-        <button class="hover:text-blue-600">Login</button>
-        <button class="hover:text-blue-600">Signup</button>
-        <i class="fa-regular fa-user text-xl cursor-pointer hover:text-blue-600"></i>
+        <a href="/login/" class="px-3 py-1 border border-blue-500 text-blue-600 rounded hover:bg-blue-50">Login</a>
+        <a href="/signup/" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Signup</a>
+
+        <div class="relative">
+            <i id="userBtn" class="fa-regular fa-user text-xl cursor-pointer hover:text-blue-600"></i>
+
+            <div id="userDropdown" class="absolute right-0 mt-2 w-40 bg-white shadow border rounded hidden">
+                <div class="px-3 py-2 border-b font-semibold">{{ request.user.username|default:"Guest" }}</div>
+                <a class="block px-3 py-2 hover:bg-gray-100 cursor-pointer">Help</a>
+                <a class="block px-3 py-2 hover:bg-gray-100 cursor-pointer">About Comparsy</a>
+            </div>
+        </div>
+
         <i class="fa-solid fa-share-nodes text-xl cursor-pointer hover:text-blue-600"></i>
     </div>
 </div>
+
+
+<!-- CONTENT BLOCK -->
+{% block content %}
 
 <!-- MAIN BODY -->
 <div class="ml-64 mt-20">
 
     <!-- 3 PLUS BUTTONS -->
     <div class="flex justify-center mt-6 gap-12">
-        <div class="w-40 h-40 border border-blue-400 rounded-xl flex items-center justify-center hover:bg-blue-50 cursor-pointer transition hover:scale-105">
+        <div class="plusBtn w-40 h-40 border border-blue-400 rounded-xl flex items-center justify-center hover:bg-blue-50 cursor-pointer transition hover:scale-105">
             <span class="text-7xl font-light text-blue-600">+</span>
         </div>
-        <div class="w-40 h-40 border border-blue-400 rounded-xl flex items-center justify-center hover:bg-blue-50 cursor-pointer transition hover:scale-105">
+        <div class="plusBtn w-40 h-40 border border-blue-400 rounded-xl flex items-center justify-center hover:bg-blue-50 cursor-pointer transition hover:scale-105">
             <span class="text-7xl font-light text-blue-600">+</span>
         </div>
-        <div class="w-40 h-40 border border-blue-400 rounded-xl flex items-center justify-center hover:bg-blue-50 cursor-pointer transition hover:scale-105">
+        <div class="plusBtn w-40 h-40 border border-blue-400 rounded-xl flex items-center justify-center hover:bg-blue-50 cursor-pointer transition hover:scale-105">
             <span class="text-7xl font-light text-blue-600">+</span>
         </div>
     </div>
 
-    <!-- CHAT MESSAGES AREA -->
-    <div id="chatbox" class="mt-10 px-10 h-[72vh] overflow-y-auto">
+    <!-- CHAT AREA -->
+    <div id="chatbox" class="mt-10 px-10 h-[72vh] overflow-y-auto ">
         <div class="text-center text-gray-400 mt-20">Start typing to search product…</div>
     </div>
 
-    <!-- CHAT INPUT BAR -->
+    <!-- INPUT BAR -->
     <div class="fixed bottom-4 left-64 right-4 flex items-center gap-3 bg-white border border-gray-300 rounded-full px-4 py-2 shadow">
         <i class="fa-solid fa-paperclip cursor-pointer text-xl text-gray-500"></i>
-        <input type="text" placeholder="Send a message or paste a link..."
-               class="flex-1 outline-none text-gray-900 bg-transparent text-base">
+        <input type="text" placeholder="Send a message or paste a link..." class="flex-1 outline-none text-gray-900 bg-transparent text-base">
         <i class="fa-solid fa-microphone cursor-pointer text-xl text-gray-500"></i>
         <button>
             <i class="fa-solid fa-paper-plane cursor-pointer text-xl text-blue-600"></i>
         </button>
     </div>
-
 </div>
+
+{% endblock %}
+
+
+<!-- PRODUCT SEARCH MODAL -->
+<div id="searchModal" class="fixed inset-0 bg-black/40 flex justify-center items-center hidden">
+    <div class="bg-white w-96 rounded-xl p-5">
+        <h2 class="text-lg font-semibold mb-3">Search product</h2>
+        <input type="text" class="w-full border p-2 rounded mb-4" placeholder="Type product...">
+        <button class="w-full bg-blue-600 text-white py-2 rounded">Search</button>
+        <p id="closeModal" class="mt-3 text-center text-sm text-gray-500 cursor-pointer">Close</p>
+    </div>
+</div>
+
+
+<script>
+    document.querySelectorAll(".plusBtn").forEach(btn=>{
+        btn.addEventListener("click", ()=> {
+            document.getElementById("searchModal").classList.remove("hidden");
+        })
+    })
+    document.getElementById("closeModal").onclick = ()=> {
+        document.getElementById("searchModal").classList.add("hidden");
+    }
+
+    const userBtn = document.getElementById("userBtn");
+    const userDropdown = document.getElementById("userDropdown");
+
+    userBtn.onclick = () => userDropdown.classList.toggle("hidden");
+</script>
 
 </body>
 </html>
