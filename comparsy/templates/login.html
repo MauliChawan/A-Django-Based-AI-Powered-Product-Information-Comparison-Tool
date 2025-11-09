@@ -2,21 +2,43 @@
 {% load static %}
 
 {% block content %}
-<div class="flex justify-center items-center h-[80vh] ml-64">
-    <form class="bg-white shadow-lg p-10 rounded-xl w-96 border border-gray-200">
-        <h2 class="text-2xl font-semibold text-center mb-6">Login</h2>
+<div class="flex justify-center items-center h-[80vh]">
 
-        <input type="text" placeholder="Username" class="w-full border p-3 rounded mb-4">
-        <input type="password" placeholder="Password" class="w-full border p-3 rounded mb-6">
+    <!-- Home Button -->
+    <a href="{% url 'index' %}">
 
-        <button class="bg-blue-600 hover:bg-blue-700 text-white w-full py-3 rounded font-semibold">
+       class="absolute top-6 left-6 text-blue-600 font-semibold hover:underline text-sm">
+       ← Home
+    </a>
+
+    <form class="bg-white shadow-xl p-10 rounded-2xl w-96 border border-gray-200">
+
+        <h2 class="text-3xl font-bold text-center mb-6 tracking-wide">Welcome Back</h2>
+        <p class="text-center text-gray-500 text-sm mb-6">Login to your account</p>
+
+        <input type="text" placeholder="Email / Username" class="w-full border p-3 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
+
+        <div class="relative">
+            <input type="password" id="loginPassword" placeholder="Password" class="w-full border p-3 rounded-lg mb-6 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
+            <span onclick="toggleLoginPassword()" class="absolute right-3 top-3 cursor-pointer text-gray-500 hover:text-gray-700 text-sm">👁️</span>
+        </div>
+
+        <button class="bg-blue-600 hover:bg-blue-700 text-white w-full py-3 rounded-lg font-semibold shadow-md tracking-wide transition-all">
             Login
         </button>
 
-        <p class="text-center mt-3 text-sm">
-            Don't have an account?
-            <a href="{% url 'signup' %}" class="text-blue-600 font-semibold">Sign Up</a>
-        </p>
+        <div class="flex justify-between items-center text-sm mt-4">
+            <a href="#" class="text-blue-600 hover:underline">Forgot Password?</a>
+            <a href="{% url 'signup' %}" class="text-blue-600 font-semibold hover:underline">Sign Up</a>
+        </div>
+
     </form>
 </div>
+
+<script>
+function toggleLoginPassword(){
+    const pass = document.getElementById("loginPassword");
+    pass.type = pass.type === "password" ? "text" : "password";
+}
+</script>
 {% endblock %}

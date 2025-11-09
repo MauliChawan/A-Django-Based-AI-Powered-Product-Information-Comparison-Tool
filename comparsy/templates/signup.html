@@ -2,22 +2,44 @@
 {% load static %}
 
 {% block content %}
-<div class="flex justify-center items-center h-[80vh] ml-64">
-    <form class="bg-white shadow-lg p-10 rounded-xl w-96 border border-gray-200">
-        <h2 class="text-2xl font-semibold text-center mb-6">Sign Up</h2>
+<div class="flex justify-center items-center h-[80vh]">
 
-        <input type="text" placeholder="Username" class="w-full border p-3 rounded mb-4">
-        <input type="email" placeholder="Email" class="w-full border p-3 rounded mb-4">
-        <input type="password" placeholder="Password" class="w-full border p-3 rounded mb-6">
+    <!-- Top Home Button -->
+    <a href="{% url 'index' %}">
+ 
+       class="absolute top-6 left-6 text-blue-600 font-semibold hover:underline text-sm">
+       ← Home
+    </a>
 
-        <button class="bg-blue-600 hover:bg-blue-700 text-white w-full py-3 rounded font-semibold">
-            Create Account
+    <form class="bg-white shadow-xl p-10 rounded-2xl w-96 border border-gray-200">
+
+        <h2 class="text-3xl font-bold text-center mb-6 tracking-wide">Create Account</h2>
+
+        <input type="text" placeholder="Full Name" class="w-full border p-3 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
+        <input type="email" placeholder="Email" class="w-full border p-3 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
+
+        <div class="relative">
+            <input type="password" id="password" placeholder="Password" class="w-full border p-3 rounded-lg mb-6 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
+            <span onclick="togglePassword()" class="absolute right-3 top-3 cursor-pointer text-gray-500 hover:text-gray-700 text-sm">👁️</span>
+        </div>
+
+        <button class="bg-blue-600 hover:bg-blue-700 text-white w-full py-3 rounded-lg font-semibold shadow-md tracking-wide transition-all">
+            Sign Up
         </button>
 
-        <p class="text-center mt-3 text-sm">
+        <p class="text-center mt-4 text-sm text-gray-600">
             Already have an account?
-            <a href="{% url 'login' %}" class="text-blue-600 font-semibold">Login</a>
+            <a href="{% url 'login' %}" class="text-blue-600 font-semibold hover:underline">
+                Login
+            </a>
         </p>
     </form>
 </div>
+
+<script>
+function togglePassword(){
+    const pass = document.getElementById("password");
+    pass.type = pass.type === "password" ? "text" : "password";
+}
+</script>
 {% endblock %}
