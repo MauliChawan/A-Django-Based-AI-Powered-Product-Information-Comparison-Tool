@@ -5,21 +5,30 @@
 <div class="flex justify-center items-center h-[80vh]">
 
     <!-- Home Button -->
-    <a href="{% url 'index' %}">
-
-       class="absolute top-6 left-6 text-blue-600 font-semibold hover:underline text-sm">
-       ← Home
+    <a href="{% url 'index' %}" class="absolute top-6 left-6 text-blue-600 font-bold hover:underline text-lg">
+        ← Home
     </a>
 
-    <form class="bg-white shadow-xl p-10 rounded-2xl w-96 border border-gray-200">
+    <form action="{% url 'login' %}" method="POST"
+          class="bg-white shadow-xl p-10 rounded-2xl w-96 border border-gray-200">
+
+        {% csrf_token %}
+
+        {% if messages %}
+            {% for msg in messages %}
+                <p class="text-red-600 text-sm mb-3">{{ msg }}</p>
+            {% endfor %}
+        {% endif %}
 
         <h2 class="text-3xl font-bold text-center mb-6 tracking-wide">Welcome Back</h2>
         <p class="text-center text-gray-500 text-sm mb-6">Login to your account</p>
 
-        <input type="text" placeholder="Email / Username" class="w-full border p-3 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
+        <input type="text" name="username" placeholder="Email / Username"
+               class="w-full border p-3 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
 
         <div class="relative">
-            <input type="password" id="loginPassword" placeholder="Password" class="w-full border p-3 rounded-lg mb-6 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
+            <input type="password" name="password" id="loginPassword" placeholder="Password"
+                   class="w-full border p-3 rounded-lg mb-6 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
             <span onclick="toggleLoginPassword()" class="absolute right-3 top-3 cursor-pointer text-gray-500 hover:text-gray-700 text-sm">👁️</span>
         </div>
 

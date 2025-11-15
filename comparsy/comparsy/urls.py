@@ -5,5 +5,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('', include('website.urls')),       # normal pages
-    path('api/', include('website.api_urls'))  # api pages   <-- add this
+     # api pages   <-- add this
 ]
