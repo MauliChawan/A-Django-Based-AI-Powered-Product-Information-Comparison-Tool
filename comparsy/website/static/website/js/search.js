@@ -1,94 +1,97 @@
-// search.js — Hybrid Mode (Amazon Real-Time API)
-
-// Open modal when + button clicked
-document.getElementById("addProductBtn").addEventListener("click", function () {
+// ---------------------------
+// Modal Open/Close
+// ---------------------------
+document.getElementById("addProductBtn").addEventListener("click", () => {
     document.getElementById("productSearchModal").classList.remove("hidden");
 });
 
-// Close modal
-document.getElementById("closeModal").addEventListener("click", function () {
+document.getElementById("closeModal").addEventListener("click", () => {
     document.getElementById("productSearchModal").classList.add("hidden");
 });
 
-// Search button inside modal
-document.getElementById("searchBtn").addEventListener("click", function () {
+
+// ---------------------------
+// Search button
+// ---------------------------
+document.getElementById("searchBtn").addEventListener("click", () => {
     let query = document.getElementById("searchInput").value.trim();
 
-    if (query.length === 0) {
-        alert("Please enter a product name!");
+    if (!query) {
+        alert("Enter a product name.");
         return;
     }
 
-    fetchProductFromAPI(query);
+    fetchProducts(query);
 });
 
-// Fetch product data from your Django API
-function fetchProductFromAPI(query) {
-    document.getElementById("searchResults").innerHTML =
-        `<p class="text-blue-500">Searching Amazon for "${query}"...</p>`;
 
-    // **FIX 1: Using the correct /api/search/ endpoint**
+// ---------------------------
+// Fetch data from Django API
+// ---------------------------
+function fetchProducts(query) {
+    const resultsBox = document.getElementById("searchResults");
+    resultsBox.innerHTML = `<p class="text-blue-500">Searching for "${query}"...</p>`;
+
     fetch(`/api/search/?query=${encodeURIComponent(query)}`)
-        .then(res => {
-            // **FIX 2: Check for non-200 status before attempting JSON parsing**
-            if (!res.ok) {
-                // If the status is 502 (API failure) or 500, throw a specific error
-                throw new Error(`Server returned status: ${res.status} (${res.statusText})`);
-            }
-            return res.json();
-        })
+        .then(response => response.json())
         .then(data => {
-            // **FIX 3: Correctly looking for the "results" key returned by views.py**
-            if (data.error || !data.results || data.results.length === 0) {
-                const errorMsg = data.error || "No products found.";
-                document.getElementById("searchResults").innerHTML =
-                    `<p class="text-red-500">Search Failed: ${errorMsg}</p>`;
+            console.log("API Response:", data);
+
+            // MUST match key "results"
+            if (!data.results || data.results.length === 0) {
+                resultsBox.innerHTML = `<p class="text-red-500">No results found.</p>`;
                 return;
             }
 
-            renderSearchResults(data.results);
+            renderResults(data.results);
         })
-        .catch(err => {
-            console.error("Fetch Error:", err);
-            // Display the specific error message, including HTTP status if available
-            document.getElementById("searchResults").innerHTML =
-                `<p class="text-red-500">Error fetching product data. Details: ${err.message || 'Unknown network error'}</p>`;
+        .catch(error => {
+            console.error("Fetch error:", error);
+            resultsBox.innerHTML = `<p class="text-red-500">Error fetching results.</p>`;
         });
 }
 
-// Renders product list in modal
-function renderSearchResults(results) {
-    let container = document.getElementById("searchResults");
-    container.innerHTML = "";
 
-    results.forEach((p, index) => {
-        let card = document.createElement("div");
-        card.className =
+// ---------------------------
+// Render Amazon Results
+// ---------------------------
+function renderResults(products) {
+    let box = document.getElementById("searchResults");
+    box.innerHTML = "";
+
+    products.forEach(product => {
+        let item = document.createElement("div");
+        item.className =
             "border p-3 rounded-lg shadow-sm hover:bg-gray-100 cursor-pointer flex gap-4";
-        card.innerHTML = `
-            <img src="${p.image}" class="w-20 h-20 object-cover rounded">
+
+        item.innerHTML = `
+            <img src="${product.image}" class="w-20 h-20 object-cover rounded">
             <div>
-                <h3 class="font-semibold">${p.title}</h3>
-                <p class="text-sm text-gray-600">₹${p.price}</p>
-                <p class="text-xs text-gray-500">${p.rating} ⭐ (${p.total_ratings} reviews)</p>
+                <h3 class="font-semibold">${product.title}</h3>
+                <p class="text-sm text-gray-600">₹${product.price}</p>
+                <p class="text-xs text-gray-500">${product.rating} ⭐ (${product.total_ratings})</p>
             </div>
         `;
 
-        card.addEventListener("click", function () {
-            addProductToComparison(p);
+        item.addEventListener("click", () => {
+            addProductToComparison(product);
             document.getElementById("productSearchModal").classList.add("hidden");
         });
 
-        container.appendChild(card);
+        box.appendChild(item);
     });
 }
 
-// Add product to comparing table (max 3)
+
+// ---------------------------
+// Comparison List
+// ---------------------------
 let compareList = [];
 
+// Add product
 function addProductToComparison(product) {
     if (compareList.length >= 3) {
-        alert("You can compare only 3 products at a time.");
+        alert("Max 3 products allowed.");
         return;
     }
 
@@ -96,60 +99,39 @@ function addProductToComparison(product) {
     updateComparisonTable();
 }
 
-// Update full comparison table
+
+// ---------------------------
+// Update Table
+// ---------------------------
 function updateComparisonTable() {
     let table = document.getElementById("comparisonTable");
-    table.innerHTML = "";
 
     if (compareList.length === 0) {
         table.innerHTML = "<p class='text-gray-500'>No products added.</p>";
         return;
     }
 
-    let header = `
-        <tr>
-            <th class="border p-2">Feature</th>
-            ${compareList.map(p => `<th class="border p-2">${p.title}</th>`).join("")}
-        </tr>
-    `;
-
-    let priceRow = `
-        <tr>
-            <td class="border p-2 font-semibold">Price</td>
-            ${compareList.map(p => `<td class="border p-2">₹${p.price}</td>`).join("")}
-        </tr>
-    `;
-
-    let ratingRow = `
-        <tr>
-            <td class="border p-2 font-semibold">Rating</td>
-            ${compareList.map(p => `<td class="border p-2">${p.rating} ⭐</td>`).join("")}
-        </tr>
-    `;
-
-    let reviewsRow = `
-        <tr>
-            <td class="border p-2 font-semibold">Reviews</td>
-            ${compareList.map(p => `<td class="border p-2">${p.total_ratings}</td>`).join("")}
-        </tr>
-    `;
-
-    let specsRow = `
-        <tr>
-            <td class="border p-2 font-semibold">Specifications</td>
-            ${compareList.map(p =>
-                `<td class="border p-2 text-sm">${p.specifications || "N/A"}</td>`
-            ).join("")}
-        </tr>
-    `;
-
     table.innerHTML = `
         <table class="w-full border-collapse">
-            ${header}
-            ${priceRow}
-            ${ratingRow}
-            ${reviewsRow}
-            ${specsRow}
+            <tr>
+                <th class="border p-2">Feature</th>
+                ${compareList.map(p => `<th class="border p-2">${p.title}</th>`).join("")}
+            </tr>
+
+            <tr>
+                <td class="border p-2 font-semibold">Price</td>
+                ${compareList.map(p => `<td class="border p-2">₹${p.price}</td>`).join("")}
+            </tr>
+
+            <tr>
+                <td class="border p-2 font-semibold">Rating</td>
+                ${compareList.map(p => `<td class="border p-2">${p.rating} ⭐</td>`).join("")}
+            </tr>
+
+            <tr>
+                <td class="border p-2 font-semibold">Reviews</td>
+                ${compareList.map(p => `<td class="border p-2">${p.total_ratings}</td>`).join("")}
+            </tr>
         </table>
     `;
 }
