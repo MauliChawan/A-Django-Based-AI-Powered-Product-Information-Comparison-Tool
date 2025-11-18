@@ -124,3 +124,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# settings.py
+
+# -----------------------------
+# RapidAPI Credentials
+# -----------------------------
+RAPIDAPI_KEY = "7c7b9fd903mshe74fd83b4c1458fp159af5jsn249df19931e9"
+RAPIDAPI_HOST = "real-time-amazon-data.p.rapidapi.com"
