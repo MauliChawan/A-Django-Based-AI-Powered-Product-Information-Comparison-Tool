@@ -232,7 +232,7 @@ function renderModalSuggestions(list){
 
     modalSuggestions.innerHTML = "";
     list.slice(0, 12).forEach(item => {
-        // Show the basic fields we expect: asin, title, price, photo
+        // Show the basic fields we expect: asin, title, price, photo ,image
         const asin = item.asin || item.id || item.ASIN || "";
         const title = item.product_title || item.title || item.name || item.product_name || "";
         const price = item.product_price || item.price || item.product_minimum_offer_price || "";
