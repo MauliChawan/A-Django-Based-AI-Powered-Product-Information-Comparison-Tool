@@ -3,15 +3,21 @@
 <head>
     <meta charset="UTF-8" />
     <title>Comparsy</title>
-
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+c   <script src="{% static 'js/search.js' %}" defer></script>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+   
 
     <style>
         ::-webkit-scrollbar{ width: 6px; }
         ::-webkit-scrollbar-thumb{ background: #87CEFA; border-radius: 4px; }
     </style>
 </head>
+<script src="{% static 'js/search.js' %}" defer></script>
+<script src="{% static 'js/history.js' %}" defer></script>
 
 <body class="bg-blue-50 text-gray-800">
 
@@ -43,7 +49,7 @@
         {% endif %}
 
         <div class="relative">
-            <!-- profile icon (click toggles dropdown) -->
+            <!-- icon of profile (click toggles dropdown) -->
             <i id="userBtn" class="fa-regular fa-user text-xl cursor-pointer hover:text-blue-600"></i>
 
             <div id="userDropdown" class="absolute right-0 mt-2 w-44 bg-white shadow border rounded hidden">
