@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8" />
     <title>Comparsy</title>
+
     {% load static %}
+
+    <!-- App CSS -->
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-c   <script src="{% static 'js/search.js' %}" defer></script>
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+    <!-- Tailwind & icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
-   
 
     <style>
         ::-webkit-scrollbar{ width: 6px; }
         ::-webkit-scrollbar-thumb{ background: #87CEFA; border-radius: 4px; }
     </style>
 </head>
-<script src="{% static 'js/search.js' %}" defer></script>
-<script src="{% static 'js/history.js' %}" defer></script>
 
 <body class="bg-blue-50 text-gray-800">
 
@@ -49,7 +49,6 @@ c   <script src="{% static 'js/search.js' %}" defer></script>
         {% endif %}
 
         <div class="relative">
-            <!-- icon of profile (click toggles dropdown) -->
             <i id="userBtn" class="fa-regular fa-user text-xl cursor-pointer hover:text-blue-600"></i>
 
             <div id="userDropdown" class="absolute right-0 mt-2 w-44 bg-white shadow border rounded hidden">
@@ -68,15 +67,14 @@ c   <script src="{% static 'js/search.js' %}" defer></script>
 <!-- MAIN CONTENT -->
 <div class="ml-64 mt-20 px-6">
 
-    <!-- Controls (kept minimal) -->
+    <!-- Controls -->
     <div class="flex items-center justify-end gap-3 mb-4">
         <button id="saveComparisonBtn" class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">Save Comparison</button>
         <button id="exportBtn" class="px-3 py-1 border rounded">Export</button>
     </div>
 
-    <!-- 3 SLOTS - "+ buttons" -->
+    <!-- 3 SLOTS -->
     <div id="slots" class="flex justify-center gap-6">
-        <!-- template for slot: data-slot-index attribute -->
         <div class="slot block-slot w-full max-w-sm h-64 border border-blue-400 rounded-xl flex items-center justify-center bg-white cursor-pointer hover:bg-blue-50"
              data-slot-index="0">
             <span class="text-8xl font-light text-blue-600">+</span>
@@ -93,14 +91,14 @@ c   <script src="{% static 'js/search.js' %}" defer></script>
         </div>
     </div>
 
-    <!-- Comparison table area -->
+    <!-- Comparison Table Area -->
     <div id="comparisonArea" class="mt-8"></div>
 </div>
 
 {% block content %}{% endblock %}
 
 <!-- SEARCH MODAL (opens when user clicks a '+') -->
-<div id="searchModal" class="fixed inset-0 bg-black/40 flex justify-center items-start pt-28 hidden z-50">
+<div id="searchModal" class="fixed inset-0 bg-black/40 flex justify-center items-start pt-28 hidden z-50" aria-hidden="true">
     <div class="bg-white w-11/12 max-w-xl rounded-xl p-5 shadow-lg">
         <div class="flex items-center justify-between mb-3">
             <h2 class="text-lg font-semibold">Search product</h2>
@@ -108,7 +106,7 @@ c   <script src="{% static 'js/search.js' %}" defer></script>
         </div>
 
         <input id="modalSearchInput" type="text" placeholder="Type product name (e.g. iPhone 15 Pro)"
-               class="w-full border p-3 rounded mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+               class="w-full border p-3 rounded mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400" autocomplete="off" />
 
         <div id="modalSuggestions" class="max-h-72 overflow-y-auto space-y-1"></div>
 
@@ -118,7 +116,13 @@ c   <script src="{% static 'js/search.js' %}" defer></script>
     </div>
 </div>
 
-<!-- SCRIPTS -->
+<!-- Include your static JS files (deferred) -->
+<script src="{% static 'js/search.js' %}" defer></script>
+<script src="{% static 'js/history.js' %}" defer></script>
+
+<!-- Inline fallback/robust script for modal behaviour + comparison rendering.
+     Keep this short — main search logic should live in search.js, but we
+     include robust glue in case of API shape differences. -->
 <script>
 /* -------------------------
    App state
@@ -132,13 +136,8 @@ const productsInSlots = [null, null, null];  // store detailed product objects
 function el(id){ return document.getElementById(id); }
 
 function formatPriceForDisplay(raw){
-    if(!raw && raw !== 0) return "NA";
-    // raw often like "$599.00" or "₹599"
-    try{
-        return raw.toString();
-    }catch(e){
-        return String(raw);
-    }
+    if(raw === null || raw === undefined || raw === "") return "NA";
+    try { return String(raw); } catch(e) { return "NA"; }
 }
 
 /* -------------------------
@@ -173,29 +172,29 @@ document.querySelectorAll(".block-slot").forEach(slot => {
 });
 
 function openSearchModal(){
-    modalSearchInput.value = "";
-    modalSuggestions.innerHTML = `<div class="p-3 text-sm text-gray-500">Type 3+ characters to search</div>`;
-    searchModal.classList.remove("hidden");
-    setTimeout(()=> modalSearchInput.focus(), 100);
+    if(modalSearchInput) modalSearchInput.value = "";
+    if(modalSuggestions) modalSuggestions.innerHTML = `<div class="p-3 text-sm text-gray-500">Type 3+ characters to search</div>`;
+    if(searchModal) searchModal.classList.remove("hidden");
+    setTimeout(()=> modalSearchInput && modalSearchInput.focus(), 100);
 }
 
 function closeSearchModal(){
-    searchModal.classList.add("hidden");
-    modalSearchInput.value = "";
-    modalSuggestions.innerHTML = "";
+    if(searchModal) searchModal.classList.add("hidden");
+    if(modalSearchInput) modalSearchInput.value = "";
+    if(modalSuggestions) modalSuggestions.innerHTML = "";
     openSlotIndex = null;
 }
 
-closeModalBtn.addEventListener("click", closeSearchModal);
-modalCancelBtn.addEventListener("click", closeSearchModal);
-searchModal.addEventListener("click", (e)=> { if(e.target === searchModal) closeSearchModal(); });
+closeModalBtn && closeModalBtn.addEventListener("click", closeSearchModal);
+modalCancelBtn && modalCancelBtn.addEventListener("click", closeSearchModal);
+searchModal && searchModal.addEventListener("click", (e)=> { if(e.target === searchModal) closeSearchModal(); });
 
 /* -------------------------
-   Backend search (proxed by Django)
-   Endpoint: /search/?query=.......
+   Debounced backend search (robust to many API shapes)
+   Endpoint: /api/search/?query=...
 --------------------------*/
 let searchDebounceTimer = null;
-modalSearchInput.addEventListener("input", ()=> {
+modalSearchInput && modalSearchInput.addEventListener("input", ()=> {
     const q = modalSearchInput.value.trim();
     modalSuggestions.innerHTML = "";
     if(q.length < 3) {
@@ -208,22 +207,41 @@ modalSearchInput.addEventListener("input", ()=> {
 });
 
 async function performBackendSearch(query){
+    if(!modalSuggestions) return;
     modalSuggestions.innerHTML = `<div class="p-3 text-sm text-gray-500">Searching...</div>`;
 
     try{
         const resp = await fetch(`/api/search/?query=${encodeURIComponent(query)}`);
-        if(!resp.ok) throw new Error("Search failed");
+        if(!resp.ok){
+            throw new Error(`Search endpoint returned ${resp.status}`);
+        }
         const data = await resp.json();
 
-        // Most RapidAPI responses have data.data.products from earlier sample.
-        // Try to extract the products array safely.
+        // Accept many shapes: { results: [...] } OR { products: [...] } OR { data: { products: [...] } } OR raw array
         let candidates = [];
-        if(data && data.data && Array.isArray(data.data.products)) candidates = data.data.products;
-        else if(data && Array.isArray(data.products)) candidates = data.products;
-        else if(Array.isArray(data)) candidates = data;
-        else candidates = [];
+        if(data) {
+            if (Array.isArray(data.results)) candidates = data.results;
+            else if (Array.isArray(data.products)) candidates = data.products;
+            else if (data && data.data && Array.isArray(data.data.products)) candidates = data.data.products;
+            else if (Array.isArray(data)) candidates = data;
+        }
 
-        renderModalSuggestions(candidates);
+        // normalize to objects expected by renderModalSuggestions
+        const normalized = candidates.map(item => {
+            if (!item || typeof item === 'string') return null;
+            // common fields
+            return {
+                asin: item.asin || item.ASIN || item.id || item.item_id || "",
+                title: item.product_title || item.title || item.name || "",
+                price: item.product_price || item.price || item.product_minimum_offer_price || "",
+                image: item.product_photo || item.image || item.thumbnail || "",
+                rating: item.product_star_rating || item.rating || item.stars || "",
+                total_ratings: item.product_num_ratings || item.total_ratings || item.reviews || 0,
+                url: item.product_url || item.url || ""
+            };
+        }).filter(Boolean);
+
+        renderModalSuggestions(normalized);
     }catch(err){
         console.error(err);
         modalSuggestions.innerHTML = `<div class="p-3 text-sm text-red-500">Search failed — try again</div>`;
@@ -231,6 +249,7 @@ async function performBackendSearch(query){
 }
 
 function renderModalSuggestions(list){
+    if(!modalSuggestions) return;
     if(!list || list.length === 0){
         modalSuggestions.innerHTML = `<div class="p-3 text-sm text-gray-500">No results</div>`;
         return;
@@ -238,34 +257,30 @@ function renderModalSuggestions(list){
 
     modalSuggestions.innerHTML = "";
     list.slice(0, 12).forEach(item => {
-        // Show the basic fields we expect: asin, title, price, photo ,image
-        const asin = item.asin || item.id || item.ASIN || "";
-        const title = item.product_title || item.title || item.name || item.product_name || "";
-        const price = item.product_price || item.price || item.product_minimum_offer_price || "";
-        const photo = item.product_photo || item.image || item.thumbnail || "";
+        const asin = item.asin || "";
+        const title = (item.title || "").toString();
+        const price = item.price || "";
+        const photo = item.image || "";
 
         const node = document.createElement("div");
         node.className = "p-2 hover:bg-gray-100 cursor-pointer border-b flex items-center gap-3";
         node.innerHTML = `
-            <img src="${photo || ''}" class="w-12 h-12 object-cover rounded" />
+            <img src="${photo || ''}" class="w-12 h-12 object-cover rounded" onerror="this.style.visibility='hidden'" />
             <div class="flex-1">
-                <div class="font-semibold text-sm">${title.substring(0, 90)}</div>
+                <div class="font-semibold text-sm">${escapeHtml(title.substring(0, 90))}</div>
                 <div class="text-xs text-gray-500">${formatPriceForDisplay(price)}</div>
             </div>
-            <div class="text-xs text-gray-600">${asin}</div>
+            <div class="text-xs text-gray-600">${escapeHtml(asin)}</div>
         `;
 
         node.addEventListener("click", ()=> {
             // when user picks an item, fetch full details by asin (or url)
-            if(!asin){
-                // fallback: if product_url is available, ask backend to fetch details with url param
-                const url = item.product_url || item.url || item.link || "";
-                if(url) fetchProductDetailsByUrl(url);
-                else {
-                    alert("Cannot fetch details for this item");
-                }
-            } else {
+            if(asin){
                 fetchProductDetailsByASIN(asin);
+            } else {
+                const url = item.url || "";
+                if(url) fetchProductDetailsByUrl(url);
+                else alert("Cannot fetch details for this item");
             }
             closeSearchModal();
         });
@@ -276,20 +291,23 @@ function renderModalSuggestions(list){
 
 /* -------------------------
    Fetch product details (proxy via Django)
-   Endpoint: /product-details/?asin=...
-   or: /product-details/?url=...
+   Endpoint: /api/product-details/?asin=...  or /api/product-details/?url=...
 --------------------------*/
-async function fetchProductDetailsByUrl(url){
+async function fetchProductDetailsByASIN(asin){
     try{
         showSlotLoading(openSlotIndex);
-        const res = await fetch(`/api/product-details/?url=${encodeURIComponent(url)}`);
-        if(!res.ok) throw new Error("Details fetch failed");
+        const res = await fetch(`/api/product-details/?asin=${encodeURIComponent(asin)}`);
+        if(!res.ok) throw new Error(`Details endpoint returned ${res.status}`);
         const data = await res.json();
 
+        // extract product object from different shapes
         let productObj = null;
         if(data && data.data && data.data.product) productObj = data.data.product;
+        else if(data && data.data && Array.isArray(data.data.products) && data.data.products.length) productObj = data.data.products[0];
         else if(data && data.product) productObj = data.product;
-        else productObj = data;
+        else if(data && Array.isArray(data) && data.length) productObj = data[0];
+        else if (data && typeof data === 'object' && (data.title || data.asin || data.image)) productObj = data;
+        else productObj = null;
 
         const normalized = normalizeProduct(productObj);
         placeProductInSlot(openSlotIndex, normalized);
@@ -300,18 +318,18 @@ async function fetchProductDetailsByUrl(url){
     }
 }
 
-
 async function fetchProductDetailsByUrl(url){
     try{
         showSlotLoading(openSlotIndex);
-        const res = await fetch(`/product-details/?url=${encodeURIComponent(url)}`);
-        if(!res.ok) throw new Error("Details fetch failed");
+        const res = await fetch(`/api/product-details/?url=${encodeURIComponent(url)}`);
+        if(!res.ok) throw new Error(`Details endpoint returned ${res.status}`);
         const data = await res.json();
 
         let productObj = null;
         if(data && data.data && data.data.product) productObj = data.data.product;
         else if(data && data.product) productObj = data.product;
-        else productObj = data;
+        else if(data && typeof data === 'object' && (data.title || data.asin || data.image)) productObj = data;
+        else productObj = null;
 
         const normalized = normalizeProduct(productObj);
         placeProductInSlot(openSlotIndex, normalized);
@@ -323,11 +341,10 @@ async function fetchProductDetailsByUrl(url){
 }
 
 /* -------------------------
-   Normalization: convert varied API shapes into our product object
-   Fields we want: asin, title, price, original_price, image, url, specs (object)
+   Normalization helper for detailed product
 --------------------------*/
 function normalizeProduct(p){
-    if(!p) return null;
+    if(!p || typeof p !== 'object') return null;
 
     const asin = p.asin || p.ASIN || p.id || p.product_id || "";
     const title = p.product_title || p.title || p.name || "";
@@ -336,58 +353,36 @@ function normalizeProduct(p){
     const image = p.product_photo || p.image || p.thumbnail || (Array.isArray(p.images) ? p.images[0] : "") || "";
     const url = p.product_url || p.url || p.link || "";
 
-    // specs extraction: many shapes:
-    // - p.specs or p.specifications as object {Display: '6.1"', ...}
-    // - p.specifications as array [{key:...,value:...}]
-    // - p.attributes as [{name:..., value:...}]
-    // - p.key_features or p.features as object or array
+    // create specs object (if present)
     let specs = {};
-
-    // 1) direct object
-    if(p.specs && typeof p.specs === "object" && !Array.isArray(p.specs)) specs = {...specs, ...p.specs};
+    if(p.specs && typeof p.specs === "object") specs = {...specs, ...p.specs};
     if(p.specifications && typeof p.specifications === "object" && !Array.isArray(p.specifications)) specs = {...specs, ...p.specifications};
-
-    // 2) array of {key, value} or {name, value}
     if(Array.isArray(p.specifications)){
         p.specifications.forEach(it => {
-            if(it.key && it.value) specs[it.key] = it.value;
-            else if(it.name && it.value) specs[it.name] = it.value;
-            else if(typeof it === "object"){
-                // try first property pair
-                const keys = Object.keys(it);
-                if(keys.length >= 2) specs[keys[0]] = it[keys[0]];
+            if(it && typeof it === 'object'){
+                if(it.key && it.value) specs[it.key] = it.value;
+                else if(it.name && it.value) specs[it.name] = it.value;
             }
         });
     }
-
     if(Array.isArray(p.attributes)){
         p.attributes.forEach(a => {
-            if(a.name && (a.value || a.value_text)) specs[a.name] = a.value || a.value_text;
+            if(a && a.name) specs[a.name] = a.value || a.value_text || "";
         });
     }
+    if(Array.isArray(p.key_features)) specs["Key Features"] = p.key_features.join(" | ");
+    if(Array.isArray(p.features)) specs["Features"] = p.features.join(" | ");
 
-    // 3) key_features / features arrays (strings) -> place as Features list
-    if(Array.isArray(p.key_features) && p.key_features.length){
-        specs["Key Features"] = p.key_features.join(" | ");
-    } else if(Array.isArray(p.features) && p.features.length){
-        specs["Features"] = p.features.join(" | ");
-    }
-
-    // 4) fallbacks: some product fields directly
     if(p.brand && !specs["Brand"]) specs["Brand"] = p.brand;
     if(p.model && !specs["Model"]) specs["Model"] = p.model;
-
-    // 5) include some top-level info as specs too, for table completeness
     if(title && !specs["Title"]) specs["Title"] = title;
     if(price && !specs["Price"]) specs["Price"] = price;
 
-    return {
-        asin, title, price, original_price, image, url, raw: p, specs
-    };
+    return { asin, title, price, original_price, image, url, raw: p, specs };
 }
 
 /* -------------------------
-   UI: place product into slot
+   UI: slot helpers + place product
 --------------------------*/
 function showSlotLoading(idx){
     const slot = document.querySelector(`.block-slot[data-slot-index="${idx}"]`);
@@ -400,20 +395,25 @@ function clearSlotLoading(idx){
 }
 
 function placeProductInSlot(idx, product){
-    if(!product) {
+    if(idx === null || idx === undefined) return;
+    const slot = document.querySelector(`.block-slot[data-slot-index="${idx}"]`);
+    if(!slot){
+        alert("Slot not found");
+        return;
+    }
+    if(!product){
+        clearSlotLoading(idx);
         alert("Invalid product data");
         return;
     }
-    productsInSlots[idx] = product;
 
-    const slot = document.querySelector(`.block-slot[data-slot-index="${idx}"]`);
-    if(!slot) return;
+    productsInSlots[idx] = product;
 
     slot.innerHTML = `
         <div class="w-full h-full p-3 flex flex-col justify-between">
             <div>
-                <img src="${product.image || ''}" class="w-full h-36 object-contain rounded mb-2 bg-white" />
-                <div class="font-semibold text-sm line-clamp-2">${product.title}</div>
+                <img src="${product.image || ''}" class="w-full h-36 object-contain rounded mb-2 bg-white" onerror="this.style.visibility='hidden'"/>
+                <div class="font-semibold text-sm line-clamp-2">${escapeHtml(product.title || "")}</div>
             </div>
             <div class="flex items-center justify-between mt-2">
                 <div class="text-green-600 font-semibold">${formatPriceForDisplay(product.price)}</div>
@@ -425,7 +425,6 @@ function placeProductInSlot(idx, product){
         </div>
     `;
 
-    // hook remove & view
     const removeBtn = slot.querySelector(".remove-btn");
     removeBtn.addEventListener("click", ()=> {
         productsInSlots[idx] = null;
@@ -435,7 +434,6 @@ function placeProductInSlot(idx, product){
 
     const viewBtn = slot.querySelector(".view-btn");
     viewBtn.addEventListener("click", ()=> {
-        // open a quick product detail modal (reuse searchModal UI)
         showProductDetailsModal(product);
     });
 
@@ -443,20 +441,19 @@ function placeProductInSlot(idx, product){
 }
 
 /* -------------------------
-   Product details quick modal (reuse search modal popup style)
+   Product details modal
 --------------------------*/
 function showProductDetailsModal(product){
-    // reuse searchModal visually - but we'll create a new overlay element
     const overlay = document.createElement("div");
     overlay.className = "fixed inset-0 bg-black/40 flex justify-center items-start pt-24 z-60";
     overlay.innerHTML = `
         <div class="bg-white w-11/12 max-w-2xl rounded-xl p-5 shadow-lg">
             <div class="flex justify-between items-start gap-4">
                 <div class="w-1/3">
-                    <img src="${product.image || ''}" class="w-full h-48 object-contain" />
+                    <img src="${product.image || ''}" class="w-full h-48 object-contain" onerror="this.style.visibility='hidden'"/>
                 </div>
                 <div class="w-2/3">
-                    <h3 class="text-lg font-semibold mb-2">${product.title}</h3>
+                    <h3 class="text-lg font-semibold mb-2">${escapeHtml(product.title || "")}</h3>
                     <div class="text-green-600 font-semibold mb-3">${formatPriceForDisplay(product.price)}</div>
                     <div id="detailSpecs" class="text-sm text-gray-700 max-h-64 overflow-y-auto"></div>
                 </div>
@@ -469,11 +466,9 @@ function showProductDetailsModal(product){
     document.body.appendChild(overlay);
 
     const detailSpecs = overlay.querySelector("#detailSpecs");
-    detailSpecs.innerHTML = buildSpecsHTML(product.specs);
+    detailSpecs.innerHTML = buildSpecsHTML(product.specs || {});
 
-    overlay.querySelector("#closeDetailBtn").addEventListener("click", ()=> {
-        overlay.remove();
-    });
+    overlay.querySelector("#closeDetailBtn").addEventListener("click", ()=> overlay.remove());
     overlay.addEventListener("click", (e)=> { if(e.target === overlay) overlay.remove(); });
 }
 
@@ -481,52 +476,46 @@ function buildSpecsHTML(specsObj){
     if(!specsObj || Object.keys(specsObj).length===0) return "<div class='text-sm text-gray-500'>No specs available</div>";
     let html = "<table class='w-full text-sm'>";
     for(const [k,v] of Object.entries(specsObj)){
-        html += `<tr class="border-b"><td class="py-2 font-medium w-1/3">${k}</td><td class="py-2">${escapeHtml(String(v))}</td></tr>`;
+        html += `<tr class="border-b"><td class="py-2 font-medium w-1/3">${escapeHtml(k)}</td><td class="py-2">${escapeHtml(String(v ?? ""))}</td></tr>`;
     }
     html += "</table>";
     return html;
 }
 
 function escapeHtml(str){
-    return str.replaceAll("&", "&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+    return (str || "").replaceAll("&", "&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
 }
 
 /* -------------------------
-   Render comparison table (union of all spec keys)
+   Render comparison table
 --------------------------*/
 function renderComparisonTable(){
     const area = el("comparisonArea");
-    // get list of filled products
-    const items = productsInSlots.filter(p => p);
+    const items = productsInSlots.filter(Boolean);
+    if(!area) return;
+
     if(items.length === 0){
         area.innerHTML = `<div class="text-center text-gray-500">Add 1-3 products by clicking + to compare</div>`;
         return;
     }
 
-    // collect union of spec keys from all products
     const allKeys = new Set();
     items.forEach(p => {
         if(p.specs && typeof p.specs === "object"){
             Object.keys(p.specs).forEach(k=> allKeys.add(k));
         }
-        // also include Title & Price as rows if missing
         if(p.title) allKeys.add("Title");
         if(p.price) allKeys.add("Price");
     });
 
     const keys = Array.from(allKeys);
-
-    // build table header with product titles
     let html = `<div class="overflow-auto"><table class="w-full border-collapse">`;
-    // header row
     html += `<thead><tr class="bg-gray-100 text-left"><th class="p-3 w-48">Spec</th>`;
     items.forEach((p,i)=> {
         html += `<th class="p-3 border-l">${escapeHtml(p.title || "Product "+(i+1))}</th>`;
     });
-    html += `</tr></thead>`;
+    html += `</tr></thead><tbody>`;
 
-    // body rows
-    html += `<tbody>`;
     keys.forEach(key => {
         html += `<tr class="border-t align-top"><td class="p-3 font-medium w-48 bg-white">${escapeHtml(key)}</td>`;
         items.forEach(p => {
@@ -538,8 +527,8 @@ function renderComparisonTable(){
         });
         html += `</tr>`;
     });
-    html += `</tbody></table></div>`;
 
+    html += `</tbody></table></div>`;
     area.innerHTML = html;
 }
 
@@ -549,13 +538,18 @@ function renderComparisonTable(){
 renderComparisonTable();
 
 /* -------------------------
-   Utility: keep modal search accessible via keyboard 'Enter'
+   Accessibility: Enter picks first suggestion
 --------------------------*/
-modalSearchInput.addEventListener("keydown", (e)=> {
+modalSearchInput && modalSearchInput.addEventListener("keydown", (e)=> {
     if(e.key === "Enter"){
         e.preventDefault();
-        const first = modalSuggestions.querySelector(".cursor-pointer");
+        const first = modalSuggestions && modalSuggestions.querySelector(".cursor-pointer");
         if(first) first.click();
+        else {
+            // If no clickable suggestion, try performing the search via API (in case user wants to hit enter)
+            const q = modalSearchInput.value.trim();
+            if(q.length >= 3) performBackendSearch(q);
+        }
     }
 });
 </script>

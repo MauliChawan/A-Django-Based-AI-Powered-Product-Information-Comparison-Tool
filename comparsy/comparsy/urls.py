@@ -1,4 +1,4 @@
-# File location: comparsy/urls.py (Example)
+# File location: comparsy/urls.py (Example) D:\comparsy\comparsy\comparsy\urls.py
 
 from django.contrib import admin
 from django.urls import path, include
@@ -14,4 +14,5 @@ urlpatterns = [
     # This line tells Django that all paths defined in 'website/api_urls.py'
     # must be prefixed with '/api/'.
     path('api/', include('website.api_urls')), 
+    
 ]

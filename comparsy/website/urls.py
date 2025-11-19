@@ -8,7 +8,6 @@ urlpatterns = [
     path('signup/', views.signupPage, name='signup'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
 
-    # 🔥 IMPORTANT — includes all API routes
+    # Include API Routes
     path('api/', include('website.api_urls')),
 ]
-
