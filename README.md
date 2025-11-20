@@ -1,5 +1,5 @@
 # Comparsy
-# A Django-Based AI-Powered Product Information Comparison Tool
+# A Django-Based AI-Powered Information Comparison Tool
 
 An intelligent **product analysis and comparison platform** built with **Django** and powered by **AI**.  
 The tool enables users to search, analyze, and compare products using **multimodal AI (text + link + image)**, delivering smart insights for better decision-making.  
